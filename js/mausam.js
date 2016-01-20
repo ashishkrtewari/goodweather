@@ -55,30 +55,47 @@
                          }
                      })
                      .then( function ( response ) {
-                         $.each( response, function ( i, val ) {
-                             html += "<li>" + val + "</li>";
-                         });
-                         $ul.html( html );
-                         $ul.listview( "refresh" );
-                         $ul.trigger( "updatelayout");
-                     });
+                         if(response==""){
+                           //checks for an invalid city name and returns error if true.
+                             $ul.html( '<li style="padding-left:10px;">No match found...</li>' );
+                         }
+                         else {
+                           $.each( response, function ( i, val ) {
+                                               html += "<li>" + val + "</li>";
+                                           });
+                                           $ul.html( html );
+                                           $ul.listview( "refresh" );
+                                           $ul.trigger( "updatelayout");
+                                       }
+                         }); 
                  }
+         else {
+           //make test undefined if search box is empty
+           text=undefined;
+         }
              });
          $("#subcit").click(function(event) {
            /* Act on the event */
-           var geoUrl = "http://maps.googleapis.com/maps/api/geocode/json?address="+text;
-           $.ajax({
-              url: geoUrl,
-              dataType: "json",
-              success: function(data) {
-                console.log(data);
-                var ltlg = data.results[0].geometry.location.lat+","+data.results[0].geometry.location.lng;
-                var entry = {coords:{ltlg}};
-                $("#location").html('<p style="text-transform:uppercase">'+text+'</p>');
-                loadWeatherltlg(ltlg);
-
-              }
-            });
+           console.log(text);
+           if(text!=undefined){
+              var geoUrl = "http://maps.googleapis.com/maps/api/geocode/json?address="+text;
+              $.ajax({
+                 url: geoUrl,
+                 dataType: "json",
+                 success: function(data) {
+                   console.log(data);
+                   var ltlg = data.results[0].geometry.location.lat+","+data.results[0].geometry.location.lng;
+                   var entry = {coords:{ltlg}};
+                   $("#location").html('<p style="text-transform:uppercase">'+text+'</p>');
+                   loadWeatherltlg(ltlg);
+                   text=undefined;
+                 }
+               });
+            }
+            else {
+              //Stops auto close of panel on hitting submit button if data entered is not valid
+              button.removeAttr('data-rel');
+            }
          });
          function loadWeatherltlg(ltlg){
            forecastURL = "https://api.forecast.io/forecast/4bc5facb7af72022a241550cb4b2cc44/"+ ltlg+"?units=si";
