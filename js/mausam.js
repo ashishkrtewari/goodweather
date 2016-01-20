@@ -29,7 +29,6 @@
 
       $(document).ready(function() {
          // Stuff to do as soon as the DOM is ready
-
          var text;
          //AutoCompleteCity
          $(document).on("click", "li", function () {
@@ -64,22 +63,29 @@
                      });
                  }
              });
+         //Function that acts when user hits submit button
          $("#subcit").click(function(event) {
            /* Act on the event */
-           var geoUrl = "http://maps.googleapis.com/maps/api/geocode/json?address="+text;
-           $.ajax({
-              url: geoUrl,
-              dataType: "json",
-              success: function(data) {
-                console.log(data);
-                var ltlg = data.results[0].geometry.location.lat+","+data.results[0].geometry.location.lng;
-                var entry = {coords:{ltlg}};
-                $("#location").html('<p style="text-transform:uppercase">'+text+'</p>');
-                loadWeatherltlg(ltlg);
+            if(text!=undefined){
+              var geoUrl = "http://maps.googleapis.com/maps/api/geocode/json?address="+text;
+              $.ajax({
+                 url: geoUrl,
+                 dataType: "json",
+                 success: function(data) {
+                   console.log(data);
+                   var ltlg = data.results[0].geometry.location.lat+","+data.results[0].geometry.location.lng;
+                   var entry = {coords:{ltlg}};
+                   $("#location").html('<p style="text-transform:uppercase">'+text+'</p>');
+                   loadWeatherltlg(ltlg);
 
-              }
-            });
-         });
+                 }
+               });
+            }
+            else {
+              alert("please enter a valid city name");
+            }
+          });
+
          function loadWeatherltlg(ltlg){
            forecastURL = "https://api.forecast.io/forecast/4bc5facb7af72022a241550cb4b2cc44/"+ ltlg+"?units=si";
            $.ajax({
