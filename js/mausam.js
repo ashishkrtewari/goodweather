@@ -138,6 +138,9 @@ var cities = {
           url: forecastURL,
           jsonp: "callback",
           dataType: "jsonp",
+          beforeSend: function(){
+            $("#summary").html('<img src="images/495.gif">');
+          },
           success: function(data) {
             console.log(data);
             $("#temp").html(Math.round(data.currently.temperature)+"&#176;C");
@@ -152,8 +155,10 @@ var cities = {
      function loadCity(city){
        $("#location").html('<p style="text-transform:uppercase">'+city+'</p>');
        if(city.toLowerCase()=="current location"){
-         if(navigator.geolocation)
+         if(navigator.geolocation){
+         alert("Please enable location on your device to get weather of your current location");
          navigator.geolocation.getCurrentPosition(loadWeather,loadDefaultCity);
+       }
          else{
            loadDefaultCity()
          }
@@ -164,6 +169,7 @@ var cities = {
      }
 
      function loadDefaultCity(){
+       alert("Please enable location on your device to get weather of your current location");
        loadCity("lucknow");
      }
 
